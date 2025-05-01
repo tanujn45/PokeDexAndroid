@@ -27,16 +27,20 @@ import com.tanujn45.pokedex.model.mockPokemonList
 import com.tanujn45.pokedex.ui.components.TypeBadge
 import com.tanujn45.pokedex.ui.theme.PokeDexTheme
 
+@Composable
+fun SearchScreen(modifier: Modifier) {
+    SearchList(pokemonList = mockPokemonList, modifier = modifier)
+}
 
 @Composable
 fun SearchList(
     modifier: Modifier = Modifier,
     pokemonList: List<MockPokemon>,
 ) {
-    LazyColumn (modifier = modifier) {
+    LazyColumn(modifier = modifier) {
         items(pokemonList) { mockPokemon ->
             SearchListItem(
-                modifier = Modifier,
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
                 mockPokemon = mockPokemon,
                 onClick = {}
             )
@@ -48,10 +52,10 @@ fun SearchList(
 fun SearchListItem(
     modifier: Modifier = Modifier, mockPokemon: MockPokemon, onClick: () -> Unit
 ) {
-    Card(modifier = modifier
-        .fillMaxWidth()
-        .clickable { onClick() }
-        .padding(horizontal = 16.dp, vertical = 8.dp), elevation = CardDefaults.cardElevation()) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }, elevation = CardDefaults.cardElevation()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
