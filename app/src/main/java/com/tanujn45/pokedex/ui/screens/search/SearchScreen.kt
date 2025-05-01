@@ -59,10 +59,10 @@ fun SearchListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.pikachu_25),
+                painter = painterResource(id = mockPokemon.imageResourceId),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(72.dp)
                     .padding(end = 16.dp)
             )
 
@@ -70,7 +70,7 @@ fun SearchListItem(
                 horizontalAlignment = Alignment.Start,
             ) {
                 Text(
-                    text = "#25",
+                    text = "#${mockPokemon.id}",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -80,7 +80,6 @@ fun SearchListItem(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.size(4.dp))
-                // Display types
                 Row {
                     mockPokemon.types.forEach { type ->
                         TypeBadge(
@@ -112,7 +111,8 @@ fun SearchListItemPreview() {
             mockPokemon = MockPokemon(
                 id = 25,
                 name = "Pikachu",
-                types = listOf(PokemonType.Electric)
+                types = listOf(PokemonType.Electric),
+                imageResourceId = R.drawable.pikachu_25,
             ),
             onClick = {})
     }
