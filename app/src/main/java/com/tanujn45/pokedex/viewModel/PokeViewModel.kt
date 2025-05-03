@@ -24,7 +24,7 @@ class PokeViewModel : ViewModel() {
         private set
 
     init {
-        fetchPokemon("venusaur")
+        fetchPokemon("cosmoem")
     }
 
     private fun fetchPokemon(name: String) {

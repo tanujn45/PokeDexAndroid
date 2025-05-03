@@ -24,7 +24,7 @@ import java.util.Locale
 
 
 @Composable
-fun PokemonDetailBasicInfo(modifier: Modifier = Modifier, pokemon: PokemonDetail) {
+fun PokemonOverview(modifier: Modifier = Modifier, pokemon: PokemonDetail) {
     Column(
         modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -59,8 +59,8 @@ fun PokemonDetailBasicInfo(modifier: Modifier = Modifier, pokemon: PokemonDetail
 
 @Preview(showBackground = true)
 @Composable
-fun PokemonDetailBasicInfoPreview() {
-    PokemonDetailBasicInfo(pokemon = bulbasaur)
+fun PokemonOverviewPreview() {
+    PokemonOverview(pokemon = bulbasaur)
 }
 
 @Composable
