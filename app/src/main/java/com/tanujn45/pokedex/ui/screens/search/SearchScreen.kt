@@ -10,26 +10,67 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tanujn45.pokedex.R
-import com.tanujn45.pokedex.model.MockPokemon
-import com.tanujn45.pokedex.model.PokemonType
-import com.tanujn45.pokedex.model.mockPokemonList
+import com.tanujn45.pokedex.models.MockPokemon
+import com.tanujn45.pokedex.models.PokemonType
+import com.tanujn45.pokedex.models.mockPokemonList
 import com.tanujn45.pokedex.ui.components.TypeBadge
 import com.tanujn45.pokedex.ui.theme.PokeDexTheme
 
 @Composable
 fun SearchScreen(modifier: Modifier) {
-    SearchList(pokemonList = mockPokemonList, modifier = modifier)
+    var searchText by remember { mutableStateOf("") }
+
+    Column(modifier = modifier) {
+        OutlinedTextField(
+            value = searchText,
+            onValueChange = { searchText = it },
+            maxLines = 1,
+            label = { Text("Search Pokemon") },
+            leadingIcon = {
+                Image(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search Icon"
+                )
+            },
+            trailingIcon = {
+                if (searchText.isNotEmpty()) {
+                    IconButton(onClick = {
+                        searchText = ""
+                    }) {
+                        Image(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Clear text"
+                        )
+                    }
+                }
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+        )
+        SearchList(pokemonList = mockPokemonList, modifier = Modifier)
+    }
 }
 
 @Composable
@@ -55,7 +96,8 @@ fun SearchListItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }, elevation = CardDefaults.cardElevation()) {
+            .clickable { onClick() }, elevation = CardDefaults.cardElevation()
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,6 +136,14 @@ fun SearchListItem(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchScreenPreview() {
+    PokeDexTheme {
+        SearchScreen(modifier = Modifier)
     }
 }
 

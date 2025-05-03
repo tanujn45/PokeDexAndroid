@@ -1,4 +1,4 @@
-package com.tanujn45.pokedex.model
+package com.tanujn45.pokedex.models
 
 import androidx.annotation.DrawableRes
 
