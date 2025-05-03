@@ -22,15 +22,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tanujn45.pokedex.models.PokemonDetail
+import com.tanujn45.pokedex.models.PokemonSpecies
 import com.tanujn45.pokedex.models.PokemonType
 import com.tanujn45.pokedex.models.bulbasaur
+import com.tanujn45.pokedex.models.bulbasaurSpecies
 
 enum class DetailTab(val title: String) {
     Overview("Overview"), Stats("Stats"), Moves("Moves"), Evolution("Evolution"), Abilities("Abilities")
 }
 
 @Composable
-fun DetailTabContent(modifier: Modifier = Modifier, pokemon: PokemonDetail) {
+fun DetailTabContent(
+    modifier: Modifier = Modifier,
+    pokemon: PokemonDetail,
+    species: PokemonSpecies
+) {
     var selectedTab by rememberSaveable { mutableStateOf(DetailTab.Overview) }
     val type: PokemonType? = PokemonType.fromString(pokemon.typeSlots.first().type.name)
     val tabs = DetailTab.entries.toTypedArray()
@@ -48,8 +54,8 @@ fun DetailTabContent(modifier: Modifier = Modifier, pokemon: PokemonDetail) {
                 val isSelected = tab == selectedTab
                 // Animate the background color between your two states
                 val targetColor = if (isSelected) type?.color?.copy(alpha = 0.7f)
-                                ?: MaterialTheme.colorScheme.primaryContainer
-                            else MaterialTheme.colorScheme.surfaceVariant
+                    ?: MaterialTheme.colorScheme.primaryContainer
+                else MaterialTheme.colorScheme.surfaceVariant
 
                 val backgroundColor by animateColorAsState(targetColor)
                 Tab(
@@ -58,7 +64,7 @@ fun DetailTabContent(modifier: Modifier = Modifier, pokemon: PokemonDetail) {
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .clip(MaterialTheme.shapes.small)
-                        .background(targetColor)
+                        .background(backgroundColor)
                         .animateContentSize()
                 ) {
                     Text(
@@ -73,11 +79,10 @@ fun DetailTabContent(modifier: Modifier = Modifier, pokemon: PokemonDetail) {
         }
 
         Spacer(Modifier.height(12.dp))
-
         when (selectedTab) {
-            DetailTab.Overview -> PokemonOverview(pokemon = pokemon)
+            DetailTab.Overview -> PokemonOverview(pokemon = pokemon, species = species)
             DetailTab.Stats -> PokemonStats(pokemon = pokemon, type)
-            DetailTab.Moves -> {}
+            DetailTab.Moves -> PokemonMoves(moves = pokemon.moveSlots)
             DetailTab.Evolution -> {}
             DetailTab.Abilities -> {}
         }
@@ -87,5 +92,5 @@ fun DetailTabContent(modifier: Modifier = Modifier, pokemon: PokemonDetail) {
 @Preview(showBackground = true)
 @Composable
 fun DetailTabContentPreview() {
-    DetailTabContent(pokemon = bulbasaur)
+    DetailTabContent(pokemon = bulbasaur, species = bulbasaurSpecies)
 }

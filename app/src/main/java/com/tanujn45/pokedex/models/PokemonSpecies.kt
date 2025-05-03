@@ -3,11 +3,9 @@ package com.tanujn45.pokedex.models
 import com.google.gson.annotations.SerializedName
 
 data class PokemonSpecies(
-    @SerializedName("flavor_text_entries")
-    val flavorTextEntries: List<FlavorTextEntry>,
+    @SerializedName("flavor_text_entries") val flavorTextEntries: List<FlavorTextEntry>,
 
-    @SerializedName("gender_rate")
-    val genderRate: Int,       // 0–8 (or -1 if genderless)
+    @SerializedName("gender_rate") val genderRate: Int,
     val habitat: NamedApiResource?,
     val genera: List<Genus>
 )
@@ -19,6 +17,39 @@ data class FlavorTextEntry(
 )
 
 data class Genus(
-    @SerializedName("genus") val genus: String,
-    val language: NamedApiResource
+    @SerializedName("genus") val genus: String, val language: NamedApiResource
+)
+
+fun PokemonSpecies.getEnglishFlavorText(): String =
+    flavorTextEntries.lastOrNull { it.language.name == "en" }?.text?.replace('\n', ' ') ?: ""
+
+fun PokemonSpecies.femaleFraction(): Float? = when {
+    genderRate < 0 -> null
+    else -> genderRate / 8f
+}
+
+fun PokemonSpecies.getEnglishGenus(): String =
+    genera.lastOrNull { it.language.name == "en" }?.genus ?: ""
+
+val bulbasaurSpecies = PokemonSpecies(
+    flavorTextEntries = listOf(
+        FlavorTextEntry(
+            text = "A strange seed was planted on its back at birth. The plant sprouts and grows with this Pokémon.",
+            language = NamedApiResource(name = "en"),
+            version = NamedApiResource(name = "red")
+        ),
+        FlavorTextEntry(
+            text = "For some time after its birth, it grows by gaining nourishment from the seed on its back.",
+            language = NamedApiResource(name = "en"),
+            version = NamedApiResource(name = "yellow")
+        )
+    ),
+    genderRate = 1,   // 1/8 female → 12.5%
+    habitat = NamedApiResource(name = "grassland"),
+    genera = listOf(
+        Genus(
+            genus = "Seed Pokémon",
+            language = NamedApiResource(name = "en")
+        )
+    )
 )

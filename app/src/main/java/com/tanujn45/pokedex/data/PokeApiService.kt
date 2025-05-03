@@ -1,6 +1,7 @@
 package com.tanujn45.pokedex.data
 
 import com.tanujn45.pokedex.models.PokemonDetail
+import com.tanujn45.pokedex.models.PokemonSpecies
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -11,7 +12,7 @@ interface PokeApiService {
     ): PokemonDetail
 
     @GET("pokemon-species/{name}")
-    suspend fun getPokemonSpecies(
+    suspend fun getPokemonSpeciesDetail(
         @Path("name") name: String
     ): PokemonSpecies
 }

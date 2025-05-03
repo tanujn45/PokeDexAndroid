@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,7 +42,7 @@ fun PokemonDetailHeader(
         Image(
             painter = painterResource(pokemonType.iconRes),
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             alpha = 0.5f,
             contentScale = ContentScale.Fit
 
@@ -51,7 +50,7 @@ fun PokemonDetailHeader(
         Column(
             modifier = Modifier
                 .padding(top = 64.dp, bottom = 16.dp)
-                .fillMaxSize(),
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
