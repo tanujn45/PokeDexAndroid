@@ -28,7 +28,6 @@ fun PokemonMoves(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),
-        // Add gutter between columns
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(moves) { move ->
@@ -42,7 +41,6 @@ private fun PokemonMoveItem(
     move: MoveSlot,
     modifier: Modifier = Modifier
 ) {
-    // Only use the first learn detail
     val detail = move.versionGroupDetails.firstOrNull()
     val learnLabel = when (detail?.moveLearnMethod?.name) {
         "level-up" -> "Lv ${detail.levelLearnedAt}"
@@ -64,7 +62,6 @@ private fun PokemonMoveItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Learn-method label
             Text(
                 text = learnLabel,
                 style = MaterialTheme.typography.labelSmall,
@@ -72,7 +69,6 @@ private fun PokemonMoveItem(
                 modifier = Modifier.width(48.dp)
             )
 
-            // Move name
             Text(
                 text = move.move.name
                     .replace('-', ' ')

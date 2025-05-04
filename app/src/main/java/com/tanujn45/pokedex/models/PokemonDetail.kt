@@ -75,6 +75,9 @@ data class NamedApiResource(
     val name: String
 )
 
+fun PokemonDetail.getSpriteUrl(): String =
+    sprites.other.dreamWorld.spriteUrl ?: sprites.frontDefault ?: ""
+
 val bulbasaur = PokemonDetail(
     id = 1, name = "Bulbasaur", height = 7, weight = 69, sprites = Sprites(
         frontDefault = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",

@@ -3,6 +3,7 @@ package com.tanujn45.pokedex.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tanujn45.pokedex.data.PokemonRepository
+import com.tanujn45.pokedex.models.EvolutionNode
 import com.tanujn45.pokedex.models.PokemonDetail
 import com.tanujn45.pokedex.models.PokemonSpecies
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 sealed interface PokeUiState {
-    data class Success(val pokemon: PokemonDetail, val species: PokemonSpecies) : PokeUiState
+    data class Success(
+        val pokemon: PokemonDetail,
+        val species: PokemonSpecies,
+        val evolutions: EvolutionNode?,
+    ) : PokeUiState
+
     data object Error : PokeUiState
     data object Loading : PokeUiState
 }
@@ -24,7 +30,7 @@ class PokeViewModel : ViewModel() {
     val pokeUiState = _pokeUiState.asStateFlow()
 
     init {
-        fetchPokemon("lucario")
+        fetchPokemon("charizard")
     }
 
     private fun fetchPokemon(name: String) {
@@ -39,9 +45,14 @@ class PokeViewModel : ViewModel() {
                 }
                 val detail = detailDeferred.await()
                 val species = speciesDeferred.await()
+                val getEvolutionNames = async(Dispatchers.IO) {
+                    repo.getEvolutionTree(species)
+                }
+                val evoTree = getEvolutionNames.await()
                 PokeUiState.Success(
                     detail,
-                    species
+                    species,
+                    evoTree
                 )
             } catch (e: Exception) {
                 PokeUiState.Error

@@ -19,14 +19,15 @@ import com.tanujn45.pokedex.models.PokemonType
 
 @Composable
 fun TypeBadge(
+    modifier: Modifier = Modifier,
     type: PokemonType,
-    modifier: Modifier = Modifier
+    hideText: Boolean = false
 ) {
     Row(
         modifier = modifier
             .clip(MaterialTheme.shapes.small)
             .background(type.color)
-            .padding(end = 12.dp),
+            .padding(end = if (!hideText) 8.dp else 0.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -35,11 +36,13 @@ fun TypeBadge(
             contentDescription = "${type.displayName} icon",
             modifier = Modifier.size(28.dp)
         )
-        Text(
-            text = type.displayName,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
+        if (!hideText) {
+            Text(
+                text = type.displayName,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
     }
 }
 
@@ -49,6 +52,16 @@ fun TypeBadge(
 fun TypeBadgePreview() {
     TypeBadge(
         type = PokemonType.Electric,
+        modifier = Modifier,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TypeBadgePreviewWithoutText() {
+    TypeBadge(
+        type = PokemonType.Electric,
+        hideText = true,
         modifier = Modifier,
     )
 }

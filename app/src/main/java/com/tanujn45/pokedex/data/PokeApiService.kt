@@ -1,5 +1,6 @@
 package com.tanujn45.pokedex.data
 
+import com.tanujn45.pokedex.models.EvolutionChain
 import com.tanujn45.pokedex.models.PokemonDetail
 import com.tanujn45.pokedex.models.PokemonSpecies
 import retrofit2.http.GET
@@ -15,4 +16,9 @@ interface PokeApiService {
     suspend fun getPokemonSpeciesDetail(
         @Path("name") name: String
     ): PokemonSpecies
+
+    @GET("evolution-chain/{id}")
+    suspend fun getEvolutionChain(
+        @Path("id") id: Int
+    ): EvolutionChain
 }

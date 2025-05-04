@@ -7,7 +7,9 @@ data class PokemonSpecies(
 
     @SerializedName("gender_rate") val genderRate: Int,
     val habitat: NamedApiResource?,
-    val genera: List<Genus>
+    val genera: List<Genus>,
+    @SerializedName("evolution_chain") val evolutionChain: ApiResource?,
+    @SerializedName("varieties") val varieties: List<PokemonSpeciesVariety>
 )
 
 data class FlavorTextEntry(
@@ -18,6 +20,14 @@ data class FlavorTextEntry(
 
 data class Genus(
     @SerializedName("genus") val genus: String, val language: NamedApiResource
+)
+
+data class ApiResource(
+    val url: String
+)
+
+data class PokemonSpeciesVariety(
+    val pokemon: NamedApiResource, @SerializedName("is_default") val isDefault: Boolean
 )
 
 fun PokemonSpecies.getEnglishFlavorText(): String =
@@ -50,6 +60,14 @@ val bulbasaurSpecies = PokemonSpecies(
         Genus(
             genus = "Seed Pokémon",
             language = NamedApiResource(name = "en")
+        )
+    ),
+    evolutionChain = ApiResource(
+        url = "https://pokeapi.co/api/v2/evolution-chain/1/"
+    ), varieties = listOf(
+        PokemonSpeciesVariety(
+            pokemon = NamedApiResource(name = "bulbasaur"),
+            isDefault = true
         )
     )
 )

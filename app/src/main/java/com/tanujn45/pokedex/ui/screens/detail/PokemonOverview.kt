@@ -197,19 +197,23 @@ fun GenderRatioLine(femalePct: Float?, modifier: Modifier = Modifier) {
                     .clip(RoundedCornerShape(4.dp))
             ) {
                 // Female segment (pink)
-                Box(
-                    Modifier
-                        .weight(femalePct)
-                        .fillMaxHeight()
-                        .background(Color(0xFFE5A9B8))
-                )
+                if (femalePct > 0) {
+                    Box(
+                        Modifier
+                            .weight(femalePct)
+                            .fillMaxHeight()
+                            .background(Color(0xFFE5A9B8))
+                    )
+                }
                 // Male segment (blue)
-                Box(
-                    Modifier
-                        .weight(malePct)
-                        .fillMaxHeight()
-                        .background(Color(0xFF7EA6E0))
-                )
+                if (malePct > 0) {
+                    Box(
+                        Modifier
+                            .weight(malePct)
+                            .fillMaxHeight()
+                            .background(Color(0xFF7EA6E0))
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(

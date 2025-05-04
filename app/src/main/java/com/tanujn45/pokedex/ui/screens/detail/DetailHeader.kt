@@ -27,6 +27,7 @@ import com.tanujn45.pokedex.models.PokemonDetail
 import com.tanujn45.pokedex.models.PokemonType
 import com.tanujn45.pokedex.models.TypeSlot
 import com.tanujn45.pokedex.models.bulbasaur
+import com.tanujn45.pokedex.models.getSpriteUrl
 import com.tanujn45.pokedex.ui.components.TypeBadge
 import java.util.Locale
 
@@ -45,7 +46,6 @@ fun PokemonDetailHeader(
             modifier = Modifier.fillMaxWidth(),
             alpha = 0.5f,
             contentScale = ContentScale.Fit
-
         )
         Column(
             modifier = Modifier
@@ -55,7 +55,7 @@ fun PokemonDetailHeader(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PokemonImage(
-                imageUrl = pokemon.sprites.other.dreamWorld.spriteUrl.toString(),
+                imageUrl = pokemon.getSpriteUrl(),
                 isPreview = isPreview,
                 modifier = Modifier.size(200.dp)
             )

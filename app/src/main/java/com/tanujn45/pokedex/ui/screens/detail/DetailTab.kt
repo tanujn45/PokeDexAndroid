@@ -21,10 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tanujn45.pokedex.models.EvolutionNode
 import com.tanujn45.pokedex.models.PokemonDetail
 import com.tanujn45.pokedex.models.PokemonSpecies
 import com.tanujn45.pokedex.models.PokemonType
 import com.tanujn45.pokedex.models.bulbasaur
+import com.tanujn45.pokedex.models.bulbasaurEvolutions
 import com.tanujn45.pokedex.models.bulbasaurSpecies
 
 enum class DetailTab(val title: String) {
@@ -35,7 +37,8 @@ enum class DetailTab(val title: String) {
 fun DetailTabContent(
     modifier: Modifier = Modifier,
     pokemon: PokemonDetail,
-    species: PokemonSpecies
+    species: PokemonSpecies,
+    evolutions: EvolutionNode?,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(DetailTab.Overview) }
     val type: PokemonType? = PokemonType.fromString(pokemon.typeSlots.first().type.name)
@@ -52,7 +55,6 @@ fun DetailTabContent(
             divider = {}) {
             tabs.forEach { tab ->
                 val isSelected = tab == selectedTab
-                // Animate the background color between your two states
                 val targetColor = if (isSelected) type?.color?.copy(alpha = 0.7f)
                     ?: MaterialTheme.colorScheme.primaryContainer
                 else MaterialTheme.colorScheme.surfaceVariant
@@ -83,7 +85,7 @@ fun DetailTabContent(
             DetailTab.Overview -> PokemonOverview(pokemon = pokemon, species = species)
             DetailTab.Stats -> PokemonStats(pokemon = pokemon, type)
             DetailTab.Moves -> PokemonMoves(moves = pokemon.moveSlots)
-            DetailTab.Evolution -> {}
+            DetailTab.Evolution -> PokemonEvolutions(root = evolutions)
             DetailTab.Abilities -> {}
         }
     }
@@ -92,5 +94,9 @@ fun DetailTabContent(
 @Preview(showBackground = true)
 @Composable
 fun DetailTabContentPreview() {
-    DetailTabContent(pokemon = bulbasaur, species = bulbasaurSpecies)
+    DetailTabContent(
+        pokemon = bulbasaur,
+        species = bulbasaurSpecies,
+        evolutions = bulbasaurEvolutions
+    )
 }
