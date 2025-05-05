@@ -37,7 +37,7 @@ import com.tanujn45.pokedex.ui.components.TypeBadge
 import com.tanujn45.pokedex.ui.theme.PokeDexTheme
 
 @Composable
-fun SearchScreen(modifier: Modifier) {
+fun SearchScreen(modifier: Modifier = Modifier, onPokemonSelected: (String) -> Unit) {
     var searchText by remember { mutableStateOf("") }
 
     Column(modifier = modifier) {
@@ -143,7 +143,7 @@ fun SearchListItem(
 @Composable
 fun SearchScreenPreview() {
     PokeDexTheme {
-        SearchScreen(modifier = Modifier)
+        SearchScreen(modifier = Modifier, onPokemonSelected = {})
     }
 }
 

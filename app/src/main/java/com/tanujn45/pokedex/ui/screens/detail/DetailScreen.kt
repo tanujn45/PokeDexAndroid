@@ -1,6 +1,7 @@
 package com.tanujn45.pokedex.ui.screens.detail
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,9 +28,17 @@ import com.tanujn45.pokedex.viewModel.PokeUiState
 import com.tanujn45.pokedex.viewModel.PokeViewModel
 
 @Composable
-fun PokemonDetailScreen(
-    modifier: Modifier = Modifier, viewModel: PokeViewModel = viewModel()
+fun DetailScreen(
+    modifier: Modifier = Modifier, pokemonName: String, onBack: () -> Unit, viewModel: PokeViewModel = viewModel()
 ) {
+    BackHandler {
+        onBack()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchPokemon(pokemonName)
+    }
+
     val uiState by viewModel.pokeUiState.collectAsState()
     when (uiState) {
         is PokeUiState.Loading -> PokemonType.fromString("grass")

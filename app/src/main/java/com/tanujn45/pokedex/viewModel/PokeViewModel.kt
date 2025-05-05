@@ -33,7 +33,7 @@ class PokeViewModel : ViewModel() {
         fetchPokemon("eevee")
     }
 
-    private fun fetchPokemon(name: String) {
+    fun fetchPokemon(name: String) {
         viewModelScope.launch {
             _pokeUiState.value = PokeUiState.Loading
             _pokeUiState.value = try {
