@@ -79,14 +79,26 @@ fun PokemonEvolutions(
             }
         }
 
-        levels.toSortedMap().forEach { (_, nodes) ->
+        levels.toSortedMap().forEach { (index, nodes) ->
             LazyRow(
                 modifier = Modifier
-                    .fillMaxWidth()
-                ,horizontalArrangement = Arrangement.Center
+                    .fillMaxWidth(), horizontalArrangement = Arrangement.Center
             ) {
                 items(nodes) { node ->
-                    EvolutionNodeGroup(node)
+                    Column {
+                        EvolutionNodeGroup(node)
+                    }
+                }
+            }
+            if (index < levels.size - 1) {
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Icon(
+                        imageVector = Icons.Default.South,
+                        contentDescription = "Has children",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -115,17 +127,6 @@ private fun EvolutionNodeGroup(
         ) {
             node.details.forEach { detail ->
                 EvolutionNodeItem(detail = detail)
-            }
-        }
-        if (node.children.isNotEmpty()) {
-            Column {
-               Spacer(modifier = Modifier.height(8.dp))
-                Icon(
-                    imageVector = Icons.Default.South,
-                    contentDescription = "Has children",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }

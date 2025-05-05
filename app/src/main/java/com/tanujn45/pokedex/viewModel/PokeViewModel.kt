@@ -30,7 +30,7 @@ class PokeViewModel : ViewModel() {
     val pokeUiState = _pokeUiState.asStateFlow()
 
     init {
-        fetchPokemon("charizard")
+        fetchPokemon("eevee")
     }
 
     private fun fetchPokemon(name: String) {
