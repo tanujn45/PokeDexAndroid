@@ -9,7 +9,8 @@ data class PokemonSpecies(
     val habitat: NamedApiResource?,
     val genera: List<Genus>,
     @SerializedName("evolution_chain") val evolutionChain: ApiResource?,
-    @SerializedName("varieties") val varieties: List<PokemonSpeciesVariety>
+    @SerializedName("varieties") val varieties: List<PokemonSpeciesVariety>,
+    @SerializedName("color") val color: NamedApiResource
 )
 
 data class FlavorTextEntry(
@@ -54,7 +55,7 @@ val bulbasaurSpecies = PokemonSpecies(
             version = NamedApiResource(name = "yellow")
         )
     ),
-    genderRate = 1,   // 1/8 female → 12.5%
+    genderRate = 1,
     habitat = NamedApiResource(name = "grassland"),
     genera = listOf(
         Genus(
@@ -69,5 +70,6 @@ val bulbasaurSpecies = PokemonSpecies(
             pokemon = NamedApiResource(name = "bulbasaur"),
             isDefault = true
         )
-    )
+    ),
+    color = NamedApiResource(name = "green")
 )

@@ -8,12 +8,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,13 +38,27 @@ import java.util.Locale
 
 @Composable
 fun PokemonDetailHeader(
-    modifier: Modifier = Modifier, pokemon: PokemonDetail, isPreview: Boolean = false
+    modifier: Modifier = Modifier,
+    pokemon: PokemonDetail,
+    onBack: () -> Unit = {},
+    isPreview: Boolean = false
 ) {
     val pokemonType = PokemonType.fromString(pokemon.typeSlots.first().type.name) ?: return
     Box(
         modifier = modifier
             .clip(MaterialTheme.shapes.large), contentAlignment = Alignment.TopCenter
     ) {
+        // Put the icon on the top left corner
+        Box(modifier = Modifier.align(Alignment.TopStart)) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+        }
+
         Image(
             painter = painterResource(pokemonType.iconRes),
             contentDescription = null,

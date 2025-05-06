@@ -26,7 +26,7 @@ enum class PokemonType(val displayName: String, @DrawableRes val iconRes: Int, v
 
     companion object {
         fun fromString(type: String): PokemonType? {
-            return values().find { it.displayName.equals(type, ignoreCase = true) }
+            return entries.find { it.displayName.equals(type, ignoreCase = true) }
         }
     }
 }

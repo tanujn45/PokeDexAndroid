@@ -29,7 +29,10 @@ import com.tanujn45.pokedex.viewModel.PokeViewModel
 
 @Composable
 fun DetailScreen(
-    modifier: Modifier = Modifier, pokemonName: String, onBack: () -> Unit, viewModel: PokeViewModel = viewModel()
+    modifier: Modifier = Modifier,
+    pokemonName: String,
+    onBack: () -> Unit,
+    viewModel: PokeViewModel = viewModel()
 ) {
     BackHandler {
         onBack()
@@ -50,7 +53,8 @@ fun DetailScreen(
                 pokemon = pokemon,
                 species = species,
                 evolutions = evolutions,
-                modifier = modifier
+                modifier = modifier,
+                onBack = onBack
             )
         }
 
@@ -60,6 +64,7 @@ fun DetailScreen(
 
 @Composable
 fun PokemonDetailContent(
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     pokemon: PokemonDetail,
     species: PokemonSpecies,
@@ -68,10 +73,10 @@ fun PokemonDetailContent(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()            // bound the height
+            .fillMaxSize()
             .padding(16.dp)
     ) {
-        PokemonDetailHeader(pokemon = pokemon, isPreview = isPreview)
+        PokemonDetailHeader(pokemon = pokemon, isPreview = isPreview, onBack = onBack)
         Spacer(Modifier.height(8.dp))
         PokemonTypeBadges(pokemon.typeSlots)
         Spacer(Modifier.height(16.dp))
@@ -92,7 +97,8 @@ fun PokemonDetailPreview() {
         pokemon = bulbasaur,
         species = bulbasaurSpecies,
         evolutions = bulbasaurEvolutions,
-        isPreview = true
+        isPreview = true,
+        onBack = {}
     )
 }
 

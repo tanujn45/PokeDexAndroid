@@ -29,10 +29,6 @@ class PokeViewModel : ViewModel() {
     private val _pokeUiState = MutableStateFlow<PokeUiState>(PokeUiState.Loading)
     val pokeUiState = _pokeUiState.asStateFlow()
 
-    init {
-        fetchPokemon("eevee")
-    }
-
     fun fetchPokemon(name: String) {
         viewModelScope.launch {
             _pokeUiState.value = PokeUiState.Loading
