@@ -8,7 +8,7 @@ data class PokemonSpecies(
     @SerializedName("gender_rate") val genderRate: Int,
     val habitat: NamedApiResource?,
     val genera: List<Genus>,
-    @SerializedName("evolution_chain") val evolutionChain: ApiResource?,
+    @SerializedName("evolution_chain") val evolutionChain: UrlApiResource?,
     @SerializedName("varieties") val varieties: List<PokemonSpeciesVariety>,
     @SerializedName("color") val color: NamedApiResource
 )
@@ -23,9 +23,6 @@ data class Genus(
     @SerializedName("genus") val genus: String, val language: NamedApiResource
 )
 
-data class ApiResource(
-    val url: String
-)
 
 data class PokemonSpeciesVariety(
     val pokemon: NamedApiResource, @SerializedName("is_default") val isDefault: Boolean
@@ -63,7 +60,7 @@ val bulbasaurSpecies = PokemonSpecies(
             language = NamedApiResource(name = "en")
         )
     ),
-    evolutionChain = ApiResource(
+    evolutionChain = UrlApiResource(
         url = "https://pokeapi.co/api/v2/evolution-chain/1/"
     ), varieties = listOf(
         PokemonSpeciesVariety(

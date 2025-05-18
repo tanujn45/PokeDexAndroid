@@ -5,14 +5,18 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.tanujn45.pokedex.models.FavoritesEntity
 import com.tanujn45.pokedex.models.PokemonSummaryEntity
 
 @Database(
-    entities = [PokemonSummaryEntity::class], version = 3, exportSchema = false
+    entities = [PokemonSummaryEntity::class, FavoritesEntity::class],
+    version = 4,
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract val pokemonSummaryDao: PokemonSummaryDao
+    abstract val favoritesDao: FavoritesDao
 
     companion object {
         @Volatile

@@ -1,9 +1,11 @@
 package com.tanujn45.pokedex.data
 
 import com.tanujn45.pokedex.models.EvolutionChain
+import com.tanujn45.pokedex.models.PokedexDetail
 import com.tanujn45.pokedex.models.PokemonDetail
 import com.tanujn45.pokedex.models.PokemonList
 import com.tanujn45.pokedex.models.PokemonSpecies
+import com.tanujn45.pokedex.models.RegionDetail
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -28,4 +30,14 @@ interface PokeApiService {
     suspend fun getPokemonList(
         @Query("limit") limit: Int, @Query("offset") offset: Int
     ): PokemonList
+
+    @GET("region/{name}")
+    suspend fun getPokemonRegion(
+        @Path("name") name: String
+    ): RegionDetail
+
+    @GET("pokedex/{name}")
+    suspend fun getPokedexDetail(
+        @Path("name") name: String
+    ): PokedexDetail
 }

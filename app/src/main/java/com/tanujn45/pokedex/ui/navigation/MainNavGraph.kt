@@ -1,72 +1,87 @@
 package com.tanujn45.pokedex.ui.navigation
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.tanujn45.pokedex.ui.components.BottomBar
 import com.tanujn45.pokedex.ui.screens.detail.DetailScreen
 import com.tanujn45.pokedex.ui.screens.favorites.FavoritesScreen
-import com.tanujn45.pokedex.ui.screens.location.LocationScreen
+import com.tanujn45.pokedex.ui.screens.region.RegionDetailScreen
 import com.tanujn45.pokedex.ui.screens.search.SearchScreen
 
 @Composable
 fun MainNavGraph(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-    val isDetailScreen = currentRoute?.startsWith(Screen.Detail.route.substringBefore("{")) ?: false
+//    val navBackStackEntry by navController.currentBackStackEntryAsState()
+//    val currentRoute = navBackStackEntry?.destination?.route
+//    val isDetailScreen = currentRoute?.startsWith(Screen.Detail.route.substringBefore("{")) ?: false
 
-    Log.d("Navigation", "Current route: $currentRoute, isDetailScreen: $isDetailScreen")
     Scaffold(
-//        topBar = {
-//            // Force a TopAppBar to always be visible for debugging
-//            val isDetailScreen = currentRoute == Screen.Detail.route
-//            Log.d("Navigation", "isDetailScreen: $isDetailScreen")
-//
-//            if (isDetailScreen) {
-//                val name = navBackStackEntry?.arguments?.getString("name") ?: "Unknown"
-//                Log.d("Navigation", "Name from args: $name")
-//                DetailTopAppBar(name = name, onBack = { navController.popBackStack() })
-//            }
-//        },
         modifier = modifier,
-        bottomBar = { BottomBar(navController) }) { innerPadding ->
+    ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = Screen.Search.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(
+                top = innerPadding.calculateTopPadding(),
+                start = innerPadding.calculateLeftPadding(
+                    layoutDirection = LayoutDirection.Ltr
+                ),
+                end = innerPadding.calculateRightPadding(
+                    layoutDirection = LayoutDirection.Ltr
+                ),
+                bottom = 0.dp
+            )
         ) {
             composable(Screen.Search.route) {
-                SearchScreen(onPokemonSelected = { selectedName ->
-                    navController.navigate(Screen.Detail.createRoute(selectedName))
-                })
+                SearchScreen(
+                    onPokemonSelected = { selectedName ->
+                        navController.navigate(Screen.Detail.createRoute(selectedName))
+                    },
+                    navController = navController,
+                    bottomPadding = innerPadding.calculateBottomPadding()
+                )
             }
             composable(Screen.Favorites.route) {
-                FavoritesScreen { selectedName ->
-                    navController.navigate(Screen.Detail.createRoute(selectedName))
-                }
+                FavoritesScreen(
+                    onPokemonSelected = { selectedName ->
+                        navController.navigate(Screen.Detail.createRoute(selectedName))
+                    },
+                    navController = navController,
+                    bottomPadding = innerPadding.calculateBottomPadding()
+                )
             }
             composable(Screen.Locations.route) {
-                LocationScreen()
+                RegionDetailScreen(
+                    regionName = "kanto",
+                    navController = navController,
+                )
             }
             composable(
                 route = Screen.Detail.route,
                 arguments = listOf(navArgument("name") { type = NavType.StringType })
             ) { backStack ->
                 val name = backStack.arguments?.getString("name")!!
-                DetailScreen(pokemonName = name, onBack = {
-                    navController.popBackStack()
-                })
+                DetailScreen(
+                    pokemonName = name,
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onPokemonSelected = { selectedName ->
+                        navController.navigate(
+                            Screen.Detail.createRoute(selectedName)
+                        )
+                    }
+                )
             }
         }
     }
 }
+

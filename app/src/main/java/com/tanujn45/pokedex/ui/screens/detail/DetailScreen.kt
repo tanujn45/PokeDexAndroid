@@ -24,6 +24,8 @@ import com.tanujn45.pokedex.models.bulbasaur
 import com.tanujn45.pokedex.models.bulbasaurEvolutions
 import com.tanujn45.pokedex.models.bulbasaurSpecies
 import com.tanujn45.pokedex.ui.components.Preloader
+import com.tanujn45.pokedex.viewModel.FavoritesUiState
+import com.tanujn45.pokedex.viewModel.FavoritesViewModel
 import com.tanujn45.pokedex.viewModel.PokeUiState
 import com.tanujn45.pokedex.viewModel.PokeViewModel
 
@@ -31,30 +33,49 @@ import com.tanujn45.pokedex.viewModel.PokeViewModel
 fun DetailScreen(
     modifier: Modifier = Modifier,
     pokemonName: String,
+    pokemonType: PokemonType = PokemonType.Grass,
     onBack: () -> Unit,
-    viewModel: PokeViewModel = viewModel()
+    onPokemonSelected: (String) -> Unit,
+    detailViewModel: PokeViewModel = viewModel(),
+    favoritesViewModel: FavoritesViewModel = viewModel(),
 ) {
     BackHandler {
         onBack()
     }
 
     LaunchedEffect(Unit) {
-        viewModel.fetchPokemon(pokemonName)
+        detailViewModel.fetchPokemon(pokemonName)
     }
 
-    val uiState by viewModel.pokeUiState.collectAsState()
-    when (uiState) {
-        is PokeUiState.Loading -> PokemonType.fromString("grass")
-            ?.let { Preloader(color = it.color, modifier = Modifier.fillMaxSize()) }
+    val detailUiState by detailViewModel.pokeUiState.collectAsState()
+    val favoritesUiState by favoritesViewModel.favoritesUiState.collectAsState()
+
+
+    when (detailUiState) {
+        is PokeUiState.Loading -> Preloader(
+            color = pokemonType.color,
+            modifier = Modifier.fillMaxSize()
+        )
 
         is PokeUiState.Success -> {
-            val (pokemon, species, evolutions) = uiState as PokeUiState.Success
+            val (pokemon, species, evolutions) = detailUiState as PokeUiState.Success
+            val isFavorite = when (favoritesUiState) {
+                is FavoritesUiState.Success ->
+                    (favoritesUiState as FavoritesUiState.Success)
+                        .results
+                        .any { it.id == pokemon.id }
+
+                else -> false
+            }
             PokemonDetailContent(
                 pokemon = pokemon,
                 species = species,
                 evolutions = evolutions,
                 modifier = modifier,
-                onBack = onBack
+                onBack = onBack,
+                isFavorite = isFavorite,
+                onFavoriteClick = favoritesViewModel::onToggleFavorite,
+                onPokemonSelected = onPokemonSelected,
             )
         }
 
@@ -69,14 +90,23 @@ fun PokemonDetailContent(
     pokemon: PokemonDetail,
     species: PokemonSpecies,
     evolutions: EvolutionNode?,
-    isPreview: Boolean = false
+    isPreview: Boolean = false,
+    isFavorite: Boolean,
+    onFavoriteClick: (id: Int) -> Unit,
+    onPokemonSelected: (String) -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
-        PokemonDetailHeader(pokemon = pokemon, isPreview = isPreview, onBack = onBack)
+        PokemonDetailHeader(
+            pokemon = pokemon,
+            isPreview = isPreview,
+            onBack = onBack,
+            isFavorite = isFavorite,
+            onFavoriteClick = onFavoriteClick
+        )
         Spacer(Modifier.height(8.dp))
         PokemonTypeBadges(pokemon.typeSlots)
         Spacer(Modifier.height(16.dp))
@@ -85,7 +115,8 @@ fun PokemonDetailContent(
             pokemon = pokemon,
             species = species,
             evolutions = evolutions,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            onPokemonSelected = onPokemonSelected,
         )
     }
 }
@@ -98,7 +129,10 @@ fun PokemonDetailPreview() {
         species = bulbasaurSpecies,
         evolutions = bulbasaurEvolutions,
         isPreview = true,
-        onBack = {}
+        onBack = {},
+        isFavorite = false,
+        onFavoriteClick = {},
+        onPokemonSelected = {}
     )
 }
 

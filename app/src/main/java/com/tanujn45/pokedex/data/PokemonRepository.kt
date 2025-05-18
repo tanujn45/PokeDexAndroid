@@ -2,11 +2,15 @@ package com.tanujn45.pokedex.data
 
 import com.tanujn45.pokedex.models.ChainLink
 import com.tanujn45.pokedex.models.EvolutionNode
-import com.tanujn45.pokedex.models.ListNamedApiResource
+import com.tanujn45.pokedex.models.FavoritesEntity
+import com.tanujn45.pokedex.models.NamedUrlApiResource
+import com.tanujn45.pokedex.models.PokedexDetail
 import com.tanujn45.pokedex.models.PokemonDetail
 import com.tanujn45.pokedex.models.PokemonSpecies
 import com.tanujn45.pokedex.models.PokemonSummary
 import com.tanujn45.pokedex.models.PokemonSummaryEntity
+import com.tanujn45.pokedex.models.RegionDetail
+import com.tanujn45.pokedex.models.getEnglishFlavorText
 import com.tanujn45.pokedex.models.getSpriteUrl
 import com.tanujn45.pokedex.models.toEvolutionNode
 import kotlinx.coroutines.Dispatchers
@@ -14,12 +18,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class PokemonRepository {
     private val api = RetrofitInstance.api
-    private val dao = AppDatabase.get().pokemonSummaryDao
+    private val pokemonSummaryDao = AppDatabase.get().pokemonSummaryDao
+    private val favoritesDao = AppDatabase.get().favoritesDao
 
     suspend fun getPokemonDetail(name: String): PokemonDetail {
         return api.getPokemonDetail(name)
@@ -78,7 +85,7 @@ class PokemonRepository {
         }.awaitAll().toMap()
     }
 
-    private suspend fun getAllPokemon(limit: Int, offset: Int): List<ListNamedApiResource> {
+    private suspend fun getAllPokemon(limit: Int, offset: Int): List<NamedUrlApiResource> {
         return api.getPokemonList(limit, offset).results
     }
 
@@ -102,11 +109,11 @@ class PokemonRepository {
                 }
             }.awaitAll()
         }
-        dao.insertAll(entities)
+        pokemonSummaryDao.insertAll(entities)
     }
 
     fun searchPokemonByName(query: String): Flow<List<PokemonSummary>> {
-        return dao.searchByName("%$query%").map { entities ->
+        return pokemonSummaryDao.searchByName("%$query%").map { entities ->
             entities.map {
                 PokemonSummary(
                     id = it.id,
@@ -121,7 +128,7 @@ class PokemonRepository {
     }
 
     fun getAllPokemonSummaries(): Flow<List<PokemonSummary>> {
-        return dao.getAll().map { entities ->
+        return pokemonSummaryDao.getAll().map { entities ->
             entities.map {
                 PokemonSummary(
                     id = it.id,
@@ -133,5 +140,42 @@ class PokemonRepository {
                 )
             }
         }
+    }
+
+    fun getFavoriteSummaries(): Flow<List<PokemonSummary>> =
+        favoritesDao.getAll().combine(pokemonSummaryDao.getAll()) { faves, all ->
+            val ids = faves.map { it.id }.toSet()
+            all.filter { it.id in ids }
+        }.map { entities ->
+            entities.map { ent ->
+                PokemonSummary(
+                    id = ent.id,
+                    name = ent.name,
+                    url = ent.url,
+                    spriteUrl = ent.spriteUrl,
+                    typeNames = ent.typeNames,
+                    speciesColor = ent.speciesColor
+                )
+            }
+        }
+
+    suspend fun toggleFavorite(id: Int) {
+        val isFav = favoritesDao.getAll().first().any { it.id == id }
+        if (isFav) favoritesDao.remove(id)
+        else favoritesDao.add(FavoritesEntity(id))
+    }
+
+    suspend fun getRegionDetail(name: String): RegionDetail =
+        api.getPokemonRegion(name)
+
+    suspend fun getPokedexEntries(dexName: String): List<String> =
+        api.getPokedexDetail(dexName).pokemonEntries.map { it.pokemonSpecies.name }
+
+    suspend fun getPokedexDetail(name: String): PokedexDetail =
+        api.getPokedexDetail(name)
+
+    suspend fun getFlavorTextFor(speciesName: String): String {
+        val species = getPokemonSpecies(speciesName)
+        return species.getEnglishFlavorText()
     }
 }

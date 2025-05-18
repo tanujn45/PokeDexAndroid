@@ -1,6 +1,7 @@
 package com.tanujn45.pokedex.ui.screens.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,12 +39,12 @@ import com.tanujn45.pokedex.ui.components.TypeBadge
 @Composable
 fun PokemonEvolutions(
     modifier: Modifier = Modifier,
-    root: EvolutionNode?
+    root: EvolutionNode?,
+    onPokemonSelected: (String) -> Unit,
 ) {
     if (root == null) {
         Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "No evolution data.",
@@ -81,12 +82,11 @@ fun PokemonEvolutions(
 
         levels.toSortedMap().forEach { (index, nodes) ->
             LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth(), horizontalArrangement = Arrangement.Center
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
             ) {
                 items(nodes) { node ->
                     Column {
-                        EvolutionNodeGroup(node)
+                        EvolutionNodeGroup(node, onPokemonSelected = onPokemonSelected)
                     }
                 }
             }
@@ -107,12 +107,10 @@ fun PokemonEvolutions(
 
 @Composable
 private fun EvolutionNodeGroup(
-    node: EvolutionNode,
-    modifier: Modifier = Modifier,
+    node: EvolutionNode, modifier: Modifier = Modifier, onPokemonSelected: (String) -> Unit
 ) {
     Column(
-        modifier = modifier
-            .padding(end = 8.dp),
+        modifier = modifier.padding(end = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
@@ -126,16 +124,18 @@ private fun EvolutionNodeGroup(
                 .padding(12.dp)
         ) {
             node.details.forEach { detail ->
-                EvolutionNodeItem(detail = detail)
+                EvolutionNodeItem(detail = detail, onPokemonSelected = onPokemonSelected)
             }
         }
     }
 }
 
 @Composable
-private fun EvolutionNodeItem(modifier: Modifier = Modifier, detail: PokemonDetail) {
+private fun EvolutionNodeItem(
+    modifier: Modifier = Modifier, detail: PokemonDetail, onPokemonSelected: (String) -> Unit
+) {
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable { onPokemonSelected(detail.id.toString()) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -158,9 +158,7 @@ private fun EvolutionNodeItem(modifier: Modifier = Modifier, detail: PokemonDeta
             detail.typeSlots.forEach { type ->
                 PokemonType.fromString(type.type.name)?.let {
                     TypeBadge(
-                        type = it,
-                        hideText = true,
-                        modifier = Modifier.padding(horizontal = 2.dp)
+                        type = it, hideText = true, modifier = Modifier.padding(horizontal = 2.dp)
                     )
                 }
             }

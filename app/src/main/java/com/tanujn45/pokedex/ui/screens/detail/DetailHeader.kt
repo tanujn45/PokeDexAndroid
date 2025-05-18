@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,14 +43,14 @@ fun PokemonDetailHeader(
     modifier: Modifier = Modifier,
     pokemon: PokemonDetail,
     onBack: () -> Unit = {},
-    isPreview: Boolean = false
+    isPreview: Boolean = false,
+    isFavorite: Boolean,
+    onFavoriteClick: (Int) -> Unit,
 ) {
     val pokemonType = PokemonType.fromString(pokemon.typeSlots.first().type.name) ?: return
     Box(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.large), contentAlignment = Alignment.TopCenter
+        modifier = modifier.clip(MaterialTheme.shapes.large), contentAlignment = Alignment.TopCenter
     ) {
-        // Put the icon on the top left corner
         Box(modifier = Modifier.align(Alignment.TopStart)) {
             IconButton(onClick = onBack) {
                 Icon(
@@ -56,6 +58,24 @@ fun PokemonDetailHeader(
                     contentDescription = "Back",
                     tint = Color.Black
                 )
+            }
+        }
+
+        Box(modifier = Modifier.align(Alignment.TopEnd)) {
+            IconButton(onClick = { onFavoriteClick(pokemon.id) }) {
+                if (isFavorite) {
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = "Favorite",
+                        tint = Color.Red
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = Color.Unspecified
+                    )
+                }
             }
         }
 
@@ -119,5 +139,9 @@ fun PokemonTypeBadges(types: List<TypeSlot>) {
 @Preview(showBackground = true, heightDp = 500)
 @Composable
 fun PokemonDetailHeaderPreview() {
-    PokemonDetailHeader(pokemon = bulbasaur, isPreview = true)
+    PokemonDetailHeader(
+        pokemon = bulbasaur,
+        isPreview = true,
+        isFavorite = false,
+        onFavoriteClick = {})
 }

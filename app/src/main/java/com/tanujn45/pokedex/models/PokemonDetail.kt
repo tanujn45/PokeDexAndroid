@@ -71,9 +71,6 @@ data class Cries(
     @SerializedName("legacy") val legacy: String
 )
 
-data class NamedApiResource(
-    val name: String
-)
 
 fun PokemonDetail.getSpriteUrl(): String =
     sprites.other.dreamWorld.spriteUrl ?: sprites.frontDefault ?: ""

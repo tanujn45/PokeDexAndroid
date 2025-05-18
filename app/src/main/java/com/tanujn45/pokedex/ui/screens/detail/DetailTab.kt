@@ -39,6 +39,7 @@ fun DetailTabContent(
     pokemon: PokemonDetail,
     species: PokemonSpecies,
     evolutions: EvolutionNode?,
+    onPokemonSelected: (String) -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(DetailTab.Overview) }
     val type: PokemonType? = PokemonType.fromString(pokemon.typeSlots.first().type.name)
@@ -85,7 +86,11 @@ fun DetailTabContent(
             DetailTab.Overview -> PokemonOverview(pokemon = pokemon, species = species)
             DetailTab.Stats -> PokemonStats(pokemon = pokemon, type)
             DetailTab.Moves -> PokemonMoves(moves = pokemon.moveSlots)
-            DetailTab.Evolution -> PokemonEvolutions(root = evolutions)
+            DetailTab.Evolution -> PokemonEvolutions(
+                root = evolutions,
+                onPokemonSelected = onPokemonSelected
+            )
+
             DetailTab.Abilities -> {}
         }
     }
@@ -97,6 +102,7 @@ fun DetailTabContentPreview() {
     DetailTabContent(
         pokemon = bulbasaur,
         species = bulbasaurSpecies,
-        evolutions = bulbasaurEvolutions
+        evolutions = bulbasaurEvolutions,
+        onPokemonSelected = {}
     )
 }
