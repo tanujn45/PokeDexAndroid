@@ -31,7 +31,7 @@ class SearchViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-//            repo.refreshPokemonSummaries()
+            repo.refreshPokemonSummaries()
             repo.getAllPokemonSummaries().collect { list ->
                 _searchUiState.value = SearchUiState.Idle(results = list)
             }
