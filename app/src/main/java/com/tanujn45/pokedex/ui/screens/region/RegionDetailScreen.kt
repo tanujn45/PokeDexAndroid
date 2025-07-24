@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
@@ -46,7 +47,7 @@ import com.tanujn45.pokedex.viewModel.RegionDetailViewModel
 fun RegionDetailScreen(
     regionName: String,
     navController: NavController,
-    viewModel: RegionDetailViewModel = viewModel()
+    viewModel: RegionDetailViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(regionName) {
@@ -54,13 +55,8 @@ fun RegionDetailScreen(
     }
 
     val detail by viewModel.regionDetail.collectAsState()
-    Log.d("RegionDetailScreen", "detail: $detail")
     val entries by viewModel.pokedexEntries.collectAsState()
-    for (entry in entries) {
-        Log.d("RegionDetailScreen", "entry: $entry")
-    }
     val flavor by viewModel.flavorText.collectAsState()
-    Log.d("RegionDetailScreen", "flavor: $flavor")
 
     Column(
         Modifier

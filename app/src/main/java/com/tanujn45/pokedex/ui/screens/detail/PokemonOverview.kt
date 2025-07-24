@@ -181,7 +181,6 @@ fun GenderRatioLine(femalePct: Float?, modifier: Modifier = Modifier) {
         Text("Genderless", style = MaterialTheme.typography.bodySmall)
     } else {
         val malePct = 1f - femalePct
-        Log.d("GenderRatioLine", "femalePct: $femalePct, malePct: $malePct")
         Column(modifier = modifier) {
             Text(
                 text = "Gender Ratio".uppercase(),

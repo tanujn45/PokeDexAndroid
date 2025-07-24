@@ -1,4 +1,4 @@
-package com.tanujn45.pokedex.data
+package com.tanujn45.pokedex.data.network
 
 import com.tanujn45.pokedex.models.EvolutionChain
 import com.tanujn45.pokedex.models.PokedexDetail

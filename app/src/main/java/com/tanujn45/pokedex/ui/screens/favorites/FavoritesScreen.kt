@@ -26,6 +26,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tanujn45.pokedex.ui.components.FloatingBottomBar
@@ -39,7 +40,7 @@ import com.tanujn45.pokedex.viewModel.FavoritesViewModel
 fun FavoritesScreen(
     modifier: Modifier = Modifier,
     onPokemonSelected: (String) -> Unit,
-    viewModel: FavoritesViewModel = viewModel(),
+    viewModel: FavoritesViewModel = hiltViewModel(),
     navController: NavController,
     bottomPadding: Dp
 ) {

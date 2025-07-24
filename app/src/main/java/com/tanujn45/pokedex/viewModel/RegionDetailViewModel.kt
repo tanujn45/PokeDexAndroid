@@ -2,10 +2,11 @@ package com.tanujn45.pokedex.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tanujn45.pokedex.data.PokemonRepository
+import com.tanujn45.pokedex.data.repo.PokemonRepository
 import com.tanujn45.pokedex.models.PokedexEntry
 import com.tanujn45.pokedex.models.RegionDetail
 import com.tanujn45.pokedex.models.toId
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,9 +16,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import retrofit2.HttpException
+import javax.inject.Inject
 
-class RegionDetailViewModel(
-    private val repo: PokemonRepository = PokemonRepository()
+@HiltViewModel
+class RegionDetailViewModel @Inject constructor(
+    private val repo: PokemonRepository
 ) : ViewModel() {
 
     private val _regionName = MutableStateFlow<String?>(null)

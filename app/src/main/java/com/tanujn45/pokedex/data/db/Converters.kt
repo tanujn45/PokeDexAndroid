@@ -1,4 +1,4 @@
-package com.tanujn45.pokedex.data
+package com.tanujn45.pokedex.data.db
 
 import androidx.room.TypeConverter
 

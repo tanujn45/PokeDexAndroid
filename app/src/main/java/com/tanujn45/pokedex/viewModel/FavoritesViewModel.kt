@@ -2,23 +2,27 @@ package com.tanujn45.pokedex.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tanujn45.pokedex.data.PokemonRepository
+import com.tanujn45.pokedex.data.repo.PokemonRepository
 import com.tanujn45.pokedex.models.PokemonSummary
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed interface FavoritesUiState {
-    object Loading : FavoritesUiState
+    data object Loading : FavoritesUiState
     data class Success(val results: List<PokemonSummary>) : FavoritesUiState
-    object Empty : FavoritesUiState
+    data object Empty : FavoritesUiState
     data class Error(val message: String) : FavoritesUiState
 }
 
-class FavoritesViewModel : ViewModel() {
-    private val repo: PokemonRepository = PokemonRepository()
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(
+    private val repo: PokemonRepository
+) : ViewModel() {
 
     private val _favoritesUiState = MutableStateFlow<FavoritesUiState>(FavoritesUiState.Loading)
     val favoritesUiState = _favoritesUiState.asStateFlow()

@@ -1,10 +1,10 @@
-package com.tanujn45.pokedex.data
+package com.tanujn45.pokedex.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.tanujn45.pokedex.models.FavoritesEntity
+import com.tanujn45.pokedex.data.db.entities.FavoritesEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tanujn45.pokedex.models.EvolutionNode
 import com.tanujn45.pokedex.models.PokemonDetail
@@ -36,8 +37,8 @@ fun DetailScreen(
     pokemonType: PokemonType = PokemonType.Grass,
     onBack: () -> Unit,
     onPokemonSelected: (String) -> Unit,
-    detailViewModel: PokeViewModel = viewModel(),
-    favoritesViewModel: FavoritesViewModel = viewModel(),
+    detailViewModel: PokeViewModel = hiltViewModel(),
+    favoritesViewModel: FavoritesViewModel = hiltViewModel(),
 ) {
     BackHandler {
         onBack()

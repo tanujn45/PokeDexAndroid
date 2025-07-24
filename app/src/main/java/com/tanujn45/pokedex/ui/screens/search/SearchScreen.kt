@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,8 +50,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.tanujn45.pokedex.models.PokemonSummary
 import com.tanujn45.pokedex.models.PokemonType
@@ -60,7 +63,6 @@ import com.tanujn45.pokedex.ui.components.FloatingBottomBar
 import com.tanujn45.pokedex.ui.components.Preloader
 import com.tanujn45.pokedex.ui.components.TypeBadge
 import com.tanujn45.pokedex.ui.theme.PokemonColorMap
-import com.tanujn45.pokedex.viewModel.SearchUiState
 import com.tanujn45.pokedex.viewModel.SearchViewModel
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
@@ -68,11 +70,12 @@ import com.tanujn45.pokedex.viewModel.SearchViewModel
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onPokemonSelected: (String) -> Unit,
-    viewModel: SearchViewModel = viewModel(),
+    viewModel: SearchViewModel = hiltViewModel(),
     navController: NavController,
     bottomPadding: Dp
 ) {
-    val uiState by viewModel.searchUiState.collectAsState()
+
+    val pagingItems = viewModel.pokemonPagingFlow.collectAsLazyPagingItems()
 
     val listState = rememberLazyListState()
     val barHeight = 56.dp + bottomPadding
@@ -101,39 +104,30 @@ fun SearchScreen(
     ) {
         Column {
             SearchBar(onQueryChanged = viewModel::onQueryChanged)
-            when (uiState) {
-                is SearchUiState.Idle -> {
-                    SearchList(
-                        pokemonList = (uiState as SearchUiState.Idle).results,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .nestedScroll(nestedConn),
-                        onClick = onPokemonSelected,
-                        listState = listState, safeBottomPadding = bottomPadding
-                    )
-                }
-
-                is SearchUiState.Loading -> {
+            when {
+                pagingItems.loadState.refresh is LoadState.Loading -> {
                     Preloader(color = Color.Red)
                 }
 
-                is SearchUiState.Success -> {
-                    SearchList(
-                        pokemonList = (uiState as SearchUiState.Success).results,
+                pagingItems.loadState.refresh is LoadState.Error -> {
+                    val error = (pagingItems.loadState.refresh as LoadState.Error).error
+                    Text(text = "Error: ${error.message}")
+                }
+
+                pagingItems.itemCount == 0 -> {
+                    Text(text = "No Pokémon found")
+                }
+
+                else -> {
+                    SearchPagingList(
+                        items = pagingItems,
                         modifier = Modifier
                             .fillMaxSize()
                             .nestedScroll(nestedConn),
                         onClick = onPokemonSelected,
-                        listState = listState, safeBottomPadding = bottomPadding
+                        listState = listState,
+                        safeBottomPadding = bottomPadding
                     )
-                }
-
-                is SearchUiState.Empty -> {
-                    Text(text = "No pokemon found")
-                }
-
-                is SearchUiState.Error -> {
-                    Text(text = "Error: ${(uiState as SearchUiState.Error).message}")
                 }
             }
         }
@@ -147,9 +141,39 @@ fun SearchScreen(
 }
 
 @Composable
-fun SearchList(
+fun SearchPagingList(
+    items: LazyPagingItems<PokemonSummary>,
     modifier: Modifier = Modifier,
+    onClick: (String) -> Unit,
+    listState: LazyListState = rememberLazyListState(),
+    safeBottomPadding: Dp = 16.dp
+) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        state = listState,
+        contentPadding =
+            PaddingValues(bottom = safeBottomPadding)
+    ) {
+        items(items.itemCount) { index ->
+            val pokemon = items[index] ?: return@items
+            SearchListItem(
+                id = pokemon.id,
+                name = pokemon.name,
+                types = pokemon.typeNames,
+                spriteUrl = pokemon.spriteUrl,
+                onClick = { onClick(pokemon.name) },
+                backgroundColor = pokemon.speciesColor
+            )
+        }
+    }
+}
+
+
+@Composable
+fun SearchList(
     pokemonList: List<PokemonSummary>,
+    modifier: Modifier = Modifier,
     onClick: (String) -> Unit,
     listState: LazyListState = rememberLazyListState(),
     safeBottomPadding: Dp = 16.dp
@@ -162,7 +186,6 @@ fun SearchList(
             PaddingValues(bottom = safeBottomPadding)
     ) {
         items(pokemonList) { pokemon ->
-            Log.d("Pokemon", "Pokemon: $pokemon")
             SearchListItem(
                 id = pokemon.id,
                 name = pokemon.name,
@@ -260,7 +283,6 @@ fun SearchListItem(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.size(4.dp))
-                    Log.d("Types", "Types: $types")
                     Row {
                         types.forEach { type ->
                             PokemonType.fromString(type)?.let {

@@ -1,4 +1,4 @@
-package com.tanujn45.pokedex.models
+package com.tanujn45.pokedex.data.db.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

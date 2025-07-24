@@ -2,15 +2,17 @@ package com.tanujn45.pokedex.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tanujn45.pokedex.data.PokemonRepository
+import com.tanujn45.pokedex.data.repo.PokemonRepository
 import com.tanujn45.pokedex.models.EvolutionNode
 import com.tanujn45.pokedex.models.PokemonDetail
 import com.tanujn45.pokedex.models.PokemonSpecies
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed interface PokeUiState {
     data class Success(
@@ -23,8 +25,10 @@ sealed interface PokeUiState {
     data object Loading : PokeUiState
 }
 
-class PokeViewModel : ViewModel() {
-    private val repo = PokemonRepository()
+@HiltViewModel
+class PokeViewModel @Inject constructor(
+    private val repo: PokemonRepository
+) : ViewModel() {
 
     private val _pokeUiState = MutableStateFlow<PokeUiState>(PokeUiState.Loading)
     val pokeUiState = _pokeUiState.asStateFlow()
@@ -46,9 +50,7 @@ class PokeViewModel : ViewModel() {
                 }
                 val evoTree = getEvolutionNames.await()
                 PokeUiState.Success(
-                    detail,
-                    species,
-                    evoTree
+                    detail, species, evoTree
                 )
             } catch (e: Exception) {
                 PokeUiState.Error
